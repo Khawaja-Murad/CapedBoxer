@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - claude/deploy-github-pages-tnZOw
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -23,9 +23,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Prepare site files
+        run: |
+          mkdir _site
+          cp index.html _site/
+          cp profile.jpg _site/
+          cp photo.jpg _site/
+
       - uses: actions/configure-pages@v5
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
+
       - id: deployment
         uses: actions/deploy-pages@v4
